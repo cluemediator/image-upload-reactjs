@@ -1,22 +1,25 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 
+// base url of API
 const BASE_URL = 'http://localhost:4000/';
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedFile: null,
-      handleResponse: null,
-      imageUrl: null
+      selectedFile: null, // to store selected file
+      handleResponse: null, // handle the API response
+      imageUrl: null // to store uploaded image path
     };
   }
 
+  // handle change event of input file
   onChangeFile = event => {
     this.setState({ selectedFile: event.target.files[0] })
   }
 
+  // handle click event of the upload button
   handleUpload = () => {
     const { selectedFile } = this.state;
     if (!selectedFile) {
@@ -33,10 +36,10 @@ class App extends Component {
     axios.post(BASE_URL + 'uploadfile', formData).then(response => {
       this.setState({
         handleResponse: {
-          isSuccess: response.status == 200,
+          isSuccess: response.status === 200,
           message: response.data.message
         },
-        imageUrl: response.data.file.path
+        imageUrl: BASE_URL + response.data.file.path
       });
     }).catch(err => {
       alert(err.message);
@@ -57,7 +60,7 @@ class App extends Component {
         {handleResponse && <p className={handleResponse.isSuccess ? "success" : "error"}>{handleResponse.message}</p>}
 
         <p className="title" style={{ marginTop: 30 }}>Uploaded Image:</p>
-        {imageUrl && <img src={BASE_URL + imageUrl} height="100" width="100" />}
+        {imageUrl && <img src={imageUrl} alt="Uploaded File" height="100" width="100" />}
       </div>
     );
   }
